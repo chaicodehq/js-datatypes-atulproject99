@@ -42,4 +42,59 @@
  */
 export function generateReportCard(student) {
   // Your code here
+  // student object: { name: "Rahul", marks: { maths: 85, science: 92, ... } }
+  if (typeof student !== 'object' || student == null || typeof student.name !== 'string' || student.name.length == 0 || typeof student.marks !== 'object' || student.marks == null) return null;
+  else if (Object.values((student.marks)).filter((e) => Number.isFinite(e) && typeof e === 'number' && e >= 0 && e <= 100).length == 0) return null;
+  else {
+    //*     - totalMarks: sum of all marks (use reduce)
+    //  - percentage: (totalMarks / (numSubjects * 100)) * 100,
+    //  *       rounded to 2 decimal places using parseFloat(val.toFixed(2))
+    //  *     - grade based on percentage:
+    //  *       "A+" (>= 90), "A" (>= 80), "B" (>= 70), "C" (>= 60), "D" (>= 40), "F" (< 40)
+    //  *     - highestSubject: subject name with highest marks (use Object.entries)
+    //  *     - lowestSubject: subject name with lowest marks
+    //  *     - passedSubjects: array of subject names where marks >= 40 (use filter)
+    //  *     - failedSubjects: array of subject names where marks < 40
+    //  *     - subjectCount: total number of subjects (Object.keys().length)
+    const name = student.name;
+    const marks = student.marks;
+    const totalMarks = Object.values(marks).reduce((acc, current) => acc + current, 0);
+    const numberOfSubject = Object.entries(marks).length;
+    const percentage = (totalMarks / (numberOfSubject * 100)) * 100;
+    const finalPercentage = parseFloat(percentage.toFixed(2));
+    let grade = '';
+    if (percentage >= 90) {
+      grade = 'A+';
+    }
+    else if (percentage >= 80) {
+      grade = 'A';
+
+    }
+    else if (percentage >= 70) {
+      grade = 'B';
+    }
+    else if (percentage >= 60) {
+      grade = 'C';
+    }
+    else if (percentage >= 40) {
+      grade = 'D';
+    }
+    else {
+      grade = 'F';
+    }
+
+    const subjectWithMarks = Object.entries(student.marks);
+
+    const highestSubject = subjectWithMarks.reduce((max, [subjectName, marks]) => marks > max.marks ? { subjectName: subjectName, marks: marks } : max, { subjectName: null, marks: -Infinity })
+    const lowestSubject = subjectWithMarks.reduce((min, [subjectName, marks]) => marks < min.marks ? { subjectName: subjectName, marks: marks } : min, { subjectName: null, marks: Infinity })
+    const passedSubjects = subjectWithMarks.filter(([subjectName, marks]) => marks >= 40).map(([subjectName, marks]) => subjectName);
+    const failedSubjects = subjectWithMarks.filter(([subjectName, marks]) => marks < 40).map(([subjectName, marks]) => subjectName);
+    // // => { name: "Rahul", totalMarks: 255, percentage: 85, grade: "A",
+    //  *   //      highestSubject: "science", lowestSubject: "english",
+    //  *   //      passedSubjects: ["maths", "science", "english"], failedSubjects: [],
+    //  *   //      subjectCount: 3
+
+    return { name: name, totalMarks: totalMarks, percentage: finalPercentage, grade: grade, highestSubject: highestSubject.subjectName, lowestSubject: lowestSubject.subjectName, passedSubjects: passedSubjects, failedSubjects: failedSubjects, subjectCount: numberOfSubject };
+  }
+
 }

@@ -31,4 +31,13 @@
  */
 export function fixBollywoodTitle(title) {
   // Your code here
+
+  if (typeof title !== 'string' || title.length == 0 || title.trim().length == 0) return "";
+  const exceptionWords = ["ka", "ki", "ke", "se", "aur", "ya", "the", "of", "in", "a", "an"]
+  /// Remov extra spaces
+  const titleAfterRemoveSpaces = title.trim().replaceAll("  ", "");
+  const upperCaseTitle = titleAfterRemoveSpaces.split(' ').map((e, index) => index != 0 && exceptionWords.includes(e) ? e.toLowerCase() : `${e.charAt(0).toUpperCase()}${e.slice(1).toLowerCase()}`).join(' ');
+  return upperCaseTitle;
+
+
 }
